@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Introduction.Mentorship", "FSharp.Introduction.Mentorship\FSharp.Introduction.Mentorship.fsproj", "{774FB58D-24F6-4E01-A959-372D8AA63C06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{774FB58D-24F6-4E01-A959-372D8AA63C06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774FB58D-24F6-4E01-A959-372D8AA63C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774FB58D-24F6-4E01-A959-372D8AA63C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774FB58D-24F6-4E01-A959-372D8AA63C06}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
