@@ -44,27 +44,34 @@ let Transform state transaction =
         | "receive wire transfer" -> IncreaseBalance account transaction
         | "pay with bank card" -> DecreaseBalance account transaction
         | "close bank account" -> CloseBankAccount account
-        | _ -> raise (InfraErrror("Command format is out of whack!"))
+        | _ -> raise (InfraErrror(sprintf "%A: Command format is out of whack!" transaction.Command))
     | Error e -> Error e
 
 [<EntryPoint>]
 let main argv =
-    let path = "test.json";
 
-    let json = System.IO.File.ReadAllText path
+    match argv.Length with
+    | 1 -> 
+        let path = argv.[0];
 
-    let transactions = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Transaction>>(json)
+        let json = System.IO.File.ReadAllText path
 
-    let initial = Ok { IsOpen = false; Balance = 0M; }
-    let transformer = fun state transaction -> Transform state transaction
+        let transactions = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Transaction>>(json)
 
-    try
-        let result = transactions |> List.fold transformer initial
+        let initial = Ok { IsOpen = false; Balance = 0M; }
+        let transformer = fun state transaction -> Transform state transaction
 
-        match result with
-        | Ok account -> printfn "Cool, here is your account state: %A" account
-        | Error message -> printfn "Domain Error: %A" message
-    with
-    | InfraErrror e -> printfn "Infra Error: %A" e
+        try
+            let result = transactions |> List.fold transformer initial
 
-    0
+            match result with
+            | Ok account -> printfn "Cool, here is your account state: %A" account
+            | Error message -> printfn "Domain Error: %A" message
+        with
+        | InfraErrror e -> printfn "Infra Error: %A" e
+
+        0
+
+    | _ ->
+        printfn "Usage: Program [path to json file]"
+        1
