@@ -51,7 +51,7 @@ let main argv =
             | "receive wire transfer" -> IncreaseBalance account transaction
             | "pay with bank card" -> DecreaseBalance account transaction
             | "close bank account" -> CloseBankAccount account
-            | _ -> raise (InfraErrror("Command out of whack!"))
+            | _ -> raise (InfraErrror("Command format is out of whack!"))
 
     printfn "%A" account
 
