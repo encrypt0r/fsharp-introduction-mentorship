@@ -1,0 +1,31 @@
+﻿[
+  {
+    "command": "Open Bank Account"
+  },
+  {
+    "command": "Deposit Cash",
+    "amount": 500
+  },
+  {
+    "command": "Emit Wire Transfer",
+    "amount": 42.69,
+    "label": "Something even more important!"
+  },
+  {
+    "command": "Withdraw Cash",
+    "amount": 50
+  },
+  {
+    "command": "Receive Wire Transfer",
+    "amount": 1500.35,
+    "label": "Something important"
+  },
+  {
+    "command": "Pay With Bank Card",
+    "amount": 42.69,
+    "label": "Most important purchase of my whole life!!!"
+  },
+  {
+    "command": "Close Bank Account"
+  }
+]
