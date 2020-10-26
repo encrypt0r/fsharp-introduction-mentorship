@@ -60,31 +60,47 @@ exception InfraErrror of string
 type Transaction = 
    { Command : string; Amount: decimal; Label: string }
 
+type AccountState =
+    | Open
+    | Closed
+    | None
+
 type Account = 
    { IsOpen : bool; Balance: decimal }
 
 let OpenAccount account =
-    { account with IsOpen = true }
+    match account.IsOpen with
+    | false -> Ok { account with IsOpen = true }
+    | true -> Error "Account is already open!"
 
 let IncreaseBalance account transaction =
-    { account with Balance = account.Balance + transaction.Amount }
+    Ok { account with Balance = account.Balance + transaction.Amount }
 
 let DecreaseBalance account transaction =
-    { account with Balance = account.Balance - transaction.Amount }
+    // Question: How can this be converted to a match expression?
+    if account.Balance < transaction.Amount then
+        Error "Account balance can't be negative!"
+    else
+        Ok { account with Balance = account.Balance - transaction.Amount }
 
 let CloseBankAccount account =
-    { account with IsOpen = false }
+    match account.IsOpen with
+    | true -> Ok { account with IsOpen = false }
+    | false -> Error "Account is already closed!"
 
-let Transform account transaction =
-    match transaction.Command.ToLowerInvariant() with
-    | "open bank account" -> OpenAccount account
-    | "deposit cash" -> IncreaseBalance account transaction
-    | "emit wire transfer" -> DecreaseBalance account transaction
-    | "withdraw cash" -> DecreaseBalance account transaction
-    | "receive wire transfer" -> IncreaseBalance account transaction
-    | "pay with bank card" -> DecreaseBalance account transaction
-    | "close bank account" -> CloseBankAccount account
-    | _ -> raise (InfraErrror("Command format is out of whack!"))
+let Transform state transaction =
+    match state with
+    | Ok account ->
+        match transaction.Command.ToLowerInvariant() with
+        | "open bank account" -> OpenAccount account
+        | "deposit cash" -> IncreaseBalance account transaction
+        | "emit wire transfer" -> DecreaseBalance account transaction
+        | "withdraw cash" -> DecreaseBalance account transaction
+        | "receive wire transfer" -> IncreaseBalance account transaction
+        | "pay with bank card" -> DecreaseBalance account transaction
+        | "close bank account" -> CloseBankAccount account
+        | _ -> raise (InfraErrror("Command format is out of whack!"))
+    | Error e -> Error e
 
 [<EntryPoint>]
 let main argv =
@@ -94,9 +110,16 @@ let main argv =
 
     let transactions = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Transaction>>(json)
 
+    let initial = Ok { IsOpen = false; Balance = 0M; }
     let transformer = fun state transaction -> Transform state transaction
-    let account = transactions |> List.fold transformer { IsOpen = false; Balance = 0M; } 
 
-    printfn "%A" account
+    try
+        let result = transactions |> List.fold transformer initial
+
+        match result with
+        | Ok account -> printfn "Cool, here is your account state: %A" account
+        | Error message -> printfn "Domain Error: %A" message
+    with
+    | InfraErrror e -> printfn "Infra Error: %A" e
 
     0
