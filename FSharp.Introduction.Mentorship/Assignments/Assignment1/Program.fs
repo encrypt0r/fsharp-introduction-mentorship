@@ -5,11 +5,6 @@ exception InfraErrror of string
 type Transaction = 
    { Command : string; Amount: decimal; Label: string }
 
-type AccountState =
-    | Open
-    | Closed
-    | None
-
 type Account = 
    { IsOpen : bool; Balance: decimal }
 
